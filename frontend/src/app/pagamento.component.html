@@ -1,0 +1,39 @@
+<section class="card section">
+  <h2>Novo pagamento</h2>
+  <p>Cadastre um débito para processamento.</p>
+
+  <div class="grid form-grid">
+    <div>
+      <label>ID do pagamento</label>
+      <input type="number" [(ngModel)]="form.idPagamento" min="1">
+    </div>
+
+    <div>
+      <label>CPF/CNPJ</label>
+      <input [(ngModel)]="form.cpfCnpj" maxlength="20" placeholder="Digite CPF ou CNPJ">
+    </div>
+
+    <div>
+      <label>Método de pagamento</label>
+      <select [(ngModel)]="form.metodoPagamento">
+        <option *ngFor="let metodo of metodos" [value]="metodo">{{ metodo }}</option>
+      </select>
+    </div>
+
+    <div *ngIf="isCartao">
+      <label>Número do cartão</label>
+      <input [(ngModel)]="form.numeroCartao" maxlength="30" placeholder="Somente para cartão">
+    </div>
+
+    <div>
+      <label>Valor (R$)</label>
+      <input type="number" [(ngModel)]="form.valor" min="0.01" step="0.01">
+    </div>
+  </div>
+
+  <div style="margin-top:18px">
+    <button class="btn btn-primary" [disabled]="enviando" (click)="salvar()">
+      {{ enviando ? 'Salvando...' : 'Adicionar pagamento' }}
+    </button>
+  </div>
+</section>

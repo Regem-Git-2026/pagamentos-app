@@ -1,0 +1,86 @@
+<section class="card section">
+  <h2>Pagamentos</h2>
+
+  <div class="grid filters">
+    <div>
+      <label>ID do pagamento</label>
+      <input type="number" [(ngModel)]="idPagamento" placeholder="Ex.: 123">
+    </div>
+    <div>
+      <label>CPF/CNPJ</label>
+      <input [(ngModel)]="cpfCnpj" placeholder="CPF/CNPJ">
+    </div>
+    <div>
+      <label>Status</label>
+      <select [(ngModel)]="status">
+        <option value="">Todos</option>
+        <option *ngFor="let s of statuses" [value]="s">{{ s }}</option>
+      </select>
+    </div>
+    <div class="actions">
+      <button class="btn btn-primary" (click)="carregar()">Filtrar</button>
+      <button class="btn btn-secondary" (click)="limparFiltros()">Limpar</button>
+    </div>
+  </div>
+
+  <div class="table-wrap" style="margin-top:22px">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>CPF/CNPJ</th>
+          <th>Método</th>
+          <th>Valor</th>
+          <th>Status</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let p of paginaAtual">
+          <td>{{ p.idPagamento }}</td>
+          <td>{{ p.cpfCnpj }}</td>
+          <td>{{ p.metodoPagamento }}</td>
+          <td>{{ p.valor | currency:'BRL' }}</td>
+          <td><span [class]="badgeClass(p.status)">{{ p.status }}</span></td>
+          <td>
+            <button class="btn btn-danger" [disabled]="p.status !== 'PENDENTE_PROCESSAMENTO'"
+                    (click)="excluir(p)">Inativar</button>
+
+            <button *ngIf="p.status === 'PENDENTE_PROCESSAMENTO'"
+                    class="btn btn-secondary" style="margin-left:5px"
+                    (click)="processar(p, 'PROCESSADO_SUCESSO')">
+              Sucesso
+            </button>
+
+            <button *ngIf="p.status === 'PENDENTE_PROCESSAMENTO'"
+                    class="btn btn-secondary" style="margin-left:5px"
+                    (click)="processar(p, 'PROCESSADO_FALHA')">
+              Falha
+            </button>
+
+            <button *ngIf="p.status === 'PROCESSADO_FALHA'"
+                    class="btn btn-secondary" style="margin-left:5px"
+                    (click)="processar(p, 'PENDENTE_PROCESSAMENTO')">
+              Reprocessar
+            </button>
+
+            <button *ngIf="p.status !== 'PROCESSADO_SUCESSO'"
+                    class="btn btn-secondary" style="margin-left:5px"
+                    (click)="processarKafka(p, p.status === 'PROCESSADO_FALHA' ? 'PENDENTE_PROCESSAMENTO' : 'PROCESSADO_SUCESSO')">
+              Kafka
+            </button>
+          </td>
+        </tr>
+        <tr *ngIf="paginaAtual.length === 0">
+          <td colspan="6" style="text-align:center;padding:28px">Nenhum pagamento encontrado.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="pagination">
+    <button class="btn btn-secondary" [disabled]="page === 1" (click)="anterior()">Anterior</button>
+    <span style="padding:10px">Página {{ page }} de {{ pages }}</span>
+    <button class="btn btn-secondary" [disabled]="page === pages" (click)="proxima()">Próxima</button>
+  </div>
+</section>

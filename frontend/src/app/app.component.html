@@ -1,0 +1,15 @@
+<header class="header">
+  <div class="container">
+    <h1>Gestão de Pagamentos de Débitos</h1>
+    <p>Cadastro, processamento e controle de pagamentos de pessoas físicas e jurídicas.</p>
+  </div>
+</header>
+
+<main class="container">
+  <app-pagamento (salvo)="reload = reload + 1"></app-pagamento>
+  <app-pagamento-lista [refreshKey]="reload"></app-pagamento-lista>
+</main>
+
+<div *ngIf="toast.toast$ | async as t" class="toast" [class.ok]="t.type === 'ok'" [class.err]="t.type === 'err'">
+  {{ t.message }}
+</div>
